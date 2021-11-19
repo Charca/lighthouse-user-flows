@@ -1,4 +1,10 @@
+/**
+ * This is a modified version of the user-flow-original.js script, which
+ * is the raw user flow exported directly from the Chrome DevTools Recorder Panel.
+ * The code is commented out with each one of the modifications I've made (numbered 1 to 8).
+ */
 const puppeteer = require('puppeteer');
+// 1. Add dependencies
 const open = require('open');
 const fs = require('fs');
 const lighthouse = require('lighthouse/lighthouse-core/fraggle-rock/api.js');
@@ -6,6 +12,7 @@ const lighthouse = require('lighthouse/lighthouse-core/fraggle-rock/api.js');
 (async () => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
+    // 2. Create a new flow
     const flow = await lighthouse.startFlow(page, { name: 'My User Flow' });
 
     async function waitForSelectors(selectors, frame) {
@@ -131,12 +138,14 @@ const lighthouse = require('lighthouse/lighthouse-core/fraggle-rock/api.js');
         await targetPage.goto('https://coffee-cart.netlify.app/');
         await Promise.all(promises);
     }
+    // 3. Capture a cold navigation report
     {
       const targetPage = page;
       await flow.navigate('https://coffee-cart.netlify.app/', {
         stepName: 'Cold navigation'
       });
     }
+    // 4. Capture a warm navigation report
     {
       const targetPage = page;
       await flow.navigate('https://coffee-cart.netlify.app/', {
@@ -166,9 +175,11 @@ const lighthouse = require('lighthouse/lighthouse-core/fraggle-rock/api.js');
         const element = await waitForSelectors([["aria/Proceed to checkout"],["#app > div.list > div > button"]], targetPage);
         await element.click({ offset: { x: 162.5, y: 23.921875} });
     }
+    // 5. Capture a snapshot report
     {
       await flow.snapshot({ stepName: 'Checkout modal opened' });
     }
+    // 6. Start capturing a timespan report
     {
       await flow.startTimespan({ stepName: 'Checkout flow' });
     }
@@ -220,12 +231,14 @@ const lighthouse = require('lighthouse/lighthouse-core/fraggle-rock/api.js');
         const element = await waitForSelectors([["aria/Submit"],["#app > div.list > div > div > div > form > div:nth-child(4) > button"]], targetPage);
         await element.click({ offset: { x: 79.859375, y: 28.859375} });
     }
+    // 7. End the timespan report
     {
       await flow.endTimespan();
     }
 
     await browser.close();
 
+    // 8. Generate the report, write the output to an HTML file, and open the file in a browser
     const reportPath = __dirname + '/user-flow.report.html';
     const report = flow.generateReport();
     fs.writeFileSync(reportPath, report);
