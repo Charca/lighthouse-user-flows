@@ -1,13 +1,20 @@
 /**
- * This is a modified version of the user-flow-original.js script, which
- * is the raw user flow exported directly from the Chrome DevTools Recorder Panel.
+ * This is a modified version of a Puppeteer script exported
+ * using the Chrome DevTools Recorder Panel that generates a
+ * Lighthouse User Flow Report consisting of:
+ * - Two Navigation reports (one for cold and one for warm page-loads),
+ * - A Snapshot report of the page when the checkout modal is opened, and
+ * - A Timespan report of the checkout flow.
+ *
  * The code is commented out with each one of the modifications I've made (numbered 1 to 8).
+ * You can see the generated report at: https://lighthouse-user-flow-report.netlify.app/
  */
- const puppeteer = require('puppeteer');
- // 1. Add dependencies
- const open = require('open');
- const fs = require('fs');
- const lighthouse = require('lighthouse/lighthouse-core/fraggle-rock/api.js');
+
+const puppeteer = require('puppeteer');
+// 1. Add dependencies
+const open = require('open');
+const fs = require('fs');
+const lighthouse = require('lighthouse/lighthouse-core/fraggle-rock/api.js');
 
 (async () => {
     const browser = await puppeteer.launch();
